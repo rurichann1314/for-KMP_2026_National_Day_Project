@@ -30,19 +30,19 @@ fun FeatureCard(title: String, content: @Composable () -> Unit) {
 @Composable
 @Preview
 fun App() {
-    // 功能一
+    // 这是第一个功能
     var selectedDice by remember { mutableStateOf("D6") }
     var result1 by remember { mutableStateOf("Ready!") }
 
-    // 功能二
+    // 这是第二个功能
     var diceCountText by remember { mutableStateOf("1") }
     var result2 by remember { mutableStateOf("Ready!") }
 
-    // 功能三
+    // 这是第三个功能
     var comboText by remember { mutableStateOf("") }
     var result3 by remember { mutableStateOf("Ready!") }
 
-    // 功能四
+    // 这是第四个功能
     var nText by remember { mutableStateOf("1") }
     var mText by remember { mutableStateOf("6") }
     var result4 by remember { mutableStateOf("Ready!") }
@@ -58,7 +58,6 @@ fun App() {
             Text(text = "Diceroller", style = MaterialTheme.typography.h4)
             Spacer(modifier = Modifier.height(20.dp))
 
-            // === 功能一：切换面数 ===
             FeatureCard("功能一：切换面数") {
                 var expanded by remember { mutableStateOf(false) }
                 Box {
@@ -76,7 +75,6 @@ fun App() {
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(onClick = {
-                    // substring(1) 取 "D6" 中第2个字符开始的子串 -> "6"
                     val sides = selectedDice.substring(1).toInt()
                     val roll = Random.nextInt(1, sides + 1)
                     result1 = "Roll $selectedDice: $roll"
@@ -86,12 +84,10 @@ fun App() {
             }
             Spacer(modifier = Modifier.height(16.dp))
 
-            // === 功能二：n个六面骰求和 ===
             FeatureCard("功能二：n个六面骰求和") {
                 OutlinedTextField(
                     value = diceCountText,
                     onValueChange = {
-                        // 手动逐个检查字符是否为数字（替代 filter { c -> c.isDigit() }）
                         var result = ""
                         for (c in it) {
                             if (c >= '0' && c <= '9') {
@@ -123,7 +119,6 @@ fun App() {
             }
             Spacer(modifier = Modifier.height(16.dp))
 
-            // === 功能三：任意组合 ===
             FeatureCard("功能三：任意组合") {
                 OutlinedTextField(
                     value = comboText,
@@ -142,7 +137,6 @@ fun App() {
             }
             Spacer(modifier = Modifier.height(16.dp))
 
-            // === 功能四：掷 n 个 m 面骰 ===
             FeatureCard("功能四：掷 n 个 m 面骰") {
                 Row {
                     OutlinedTextField(
@@ -163,7 +157,6 @@ fun App() {
                     OutlinedTextField(
                         value = mText,
                         onValueChange = {
-                            // 手动逐个检查字符是否为数字
                             var result = ""
                             for (c in it) {
                                 if (c >= '0' && c <= '9') {
@@ -178,7 +171,6 @@ fun App() {
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(onClick = {
-                    // 使用 try-catch 替代 toIntOrNull() ?: default
                     val n = try {
                         nText.toInt()
                     } catch (e: NumberFormatException) {
@@ -205,24 +197,15 @@ fun App() {
     }
 }
 
-/**
- * 解析骰子表达式并计算总点数
- * 支持格式: "3D6 + 2D8"、"1D20" 等，不区分大小写
- * 不使用 Regex，用字符串分割实现
- */
 fun calculateDiceRoll(input: String): Int {
     var total = 0
-    // 按 "+" 分割多个骰子表达式（如 "3D6+2D8" -> ["3D6", "2D8"]）
     val parts = input.split("+")
     for (part in parts) {
-        // 转为大写后查找 "D" 的位置（替代正则表达式）
         val upperPart = part.uppercase()
         val dIndex = upperPart.indexOf("D")
         if (dIndex > 0) {
-            // 提取 D 前面的部分作为数量，后面的部分作为面数
             val countStr = part.substring(0, dIndex).trim()
             val sidesStr = part.substring(dIndex + 1).trim()
-            // 使用 try-catch 替代 toIntOrNull()
             val count = try { countStr.toInt() } catch (e: NumberFormatException) { 0 }
             val sides = try { sidesStr.toInt() } catch (e: NumberFormatException) { 0 }
             if (count > 0 && sides > 0) {

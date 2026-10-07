@@ -141,7 +141,7 @@ fun App() {
                 Row {
                     OutlinedTextField(
                         value = nText,
-                        onValueChange =
+                        onValueChange = {
                             var result = ""
                             for (c in it) {
                                 if (c >= '0' && c <= '9') {
